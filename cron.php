@@ -1,4 +1,5 @@
 <?php
+chdir(dirname(__FILE__));
 require('functions.php');
 
 
@@ -6,13 +7,13 @@ require('functions.php');
 //Checar configuracoes e cache
 //////////////////////////////////////////////////////////////////////////////////////////////
 if(!is_readable('cache.json') || !is_readable('config.json')){
-    die('Nao foi possivel ler config.json e/ou cache.json, execute loginRegister.php');
+    die('Nao foi possivel ler config.json e/ou cache.json, execute loginRegister.php'.PHP_EOL);
 }
 
 $configData = @json_decode(file_get_contents('config.json'));
-if(!is_object($configData) || empty($configData)) die('Nao foi possivel ler config.json, execute loginRegister.php');
+if(!is_object($configData) || empty($configData)) die('Nao foi possivel ler config.json, execute loginRegister.php'.PHP_EOL);
 $cacheData = @json_decode(file_get_contents('cache.json'));
-if(!is_object($cacheData) || empty($cacheData)) die('Nao foi possivel ler cache.json, execute loginRegister.php');
+if(!is_object($cacheData) || empty($cacheData)) die('Nao foi possivel ler cache.json, execute loginRegister.php'.PHP_EOL);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +58,7 @@ foreach ($materias as $materia) {
         $alteradas[] = $materia->Disciplina;
     }
 }
-if(empty($alteradas)) die('Sem alteracoes no boletim');
+if(empty($alteradas)) die('Sem alteracoes no boletim'.PHP_EOL);
 echo 'Alteracoes encontradas, enviando telegram'.PHP_EOL;
 
 
@@ -66,7 +67,7 @@ echo 'Alteracoes encontradas, enviando telegram'.PHP_EOL;
 //////////////////////////////////////////////////////////////////////////////////////////////
 $mensagem = "*Alterações na(s) matéria(s):* " . implode(', ', $alteradas);
 $resp = sendTelegram($mensagem, $configData->telegram_chatid, $configData->telegram_token);
-if($resp->ok !== true) die('erro api telegram');
+if($resp->ok !== true) die('erro api telegram'.PHP_EOL);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
