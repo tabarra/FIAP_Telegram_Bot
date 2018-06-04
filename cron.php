@@ -46,6 +46,22 @@ if(
 $materias = &$boletimData->ListaNotas;
 
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//TMP TMP TMP TMP TMP TMP TMP TMP
+//////////////////////////////////////////////////////////////////////////////////////////////
+function getLastNac($materia){
+    $ultimaNota = "nc";
+    foreach ($materia->ListaNac1 as $nac) {
+        $ultimaNota = $nac->Nota;
+    }
+    return $ultimaNota;
+}
+
+
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 //Comparar boletim com cache
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,9 +71,11 @@ foreach ($materias as $materia) {
         !property_exists($cacheData, $materia->CodigoRelacao) ||
         $materia != $cacheData->{$materia->CodigoRelacao}
     ){
-        $alteradas[] = $materia->Disciplina;
+        $lastNac = getLastNac($materia);
+        $alteradas[] = "{$materia->Disciplina} (LN: {$lastNac}   Freq: {$materia->Frequencia}%)";
     }
 }
+if(count((array)$alteradas) == 9) die('Sem alteracoes no boletim 1'.PHP_EOL);
 if(empty($alteradas)) die('Sem alteracoes no boletim'.PHP_EOL);
 echo 'Alteracoes encontradas, enviando telegram'.PHP_EOL;
 
@@ -65,7 +83,7 @@ echo 'Alteracoes encontradas, enviando telegram'.PHP_EOL;
 //////////////////////////////////////////////////////////////////////////////////////////////
 //Compondo e enviando telegram
 //////////////////////////////////////////////////////////////////////////////////////////////
-$mensagem = "*Alterações na(s) matéria(s):* " . implode(', ', $alteradas);
+$mensagem = "*Alterações na(s) matéria(s):*\n" . implode(",\n", $alteradas);
 $resp = sendTelegram($mensagem, $configData->telegram_chatid, $configData->telegram_token);
 if($resp->ok !== true) die('erro api telegram'.PHP_EOL);
 
